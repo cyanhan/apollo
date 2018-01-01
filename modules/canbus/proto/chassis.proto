@@ -5,6 +5,7 @@ package apollo.canbus;
 import "modules/common/proto/header.proto";
 import "modules/common/proto/vehicle_signal.proto";
 import "modules/common/proto/drive_state.proto";
+import "modules/common/proto/error_code.proto";
 
 // next id :30
 message Chassis {
@@ -16,22 +17,6 @@ message Chassis {
 
     // security mode when manual intervention happens, only response status
     EMERGENCY_MODE = 4;
-  }
-
-  enum ErrorCode {
-    NO_ERROR = 0;
-
-    CMD_NOT_IN_PERIOD = 1;  // control cmd not in period
-
-    // car chassis report error, like steer, brake, throttle, gear fault
-    CHASSIS_ERROR = 2;
-
-    MANUAL_INTERVENTION = 3;  // human manual intervention
-
-    // receive car chassis can frame not in period
-    CHASSIS_CAN_NOT_IN_PERIOD = 4;
-
-    UNKNOWN_ERROR = 5;
   }
 
   enum GearPosition {
@@ -77,7 +62,7 @@ message Chassis {
   optional bool wiper = 19;
   optional bool disengage_status = 20 [deprecated = true];
   optional DrivingMode driving_mode = 21 [default = COMPLETE_MANUAL];
-  optional ErrorCode error_code = 22 [default = NO_ERROR];
+  optional apollo.common.ErrorCode error_code = 22;
   optional GearPosition gear_location = 23;
 
   // timestamp for steering module
@@ -126,4 +111,20 @@ enum GpsQuality {
   FIX_2D = 1;
   FIX_3D = 2;
   FIX_INVALID = 3;
+}
+
+enum ErrorCode {
+  NO_ERROR = 0;
+
+  CMD_NOT_IN_PERIOD = 1;  // control cmd not in period
+
+  // car chassis report error, like steer, brake, throttle, gear fault
+  CHASSIS_ERROR = 2;
+
+  MANUAL_INTERVENTION = 3;  // human manual intervention
+
+  // receive car chassis can frame not in period
+  CHASSIS_CAN_NOT_IN_PERIOD = 4;
+
+  UNKNOWN_ERROR = 5;
 }

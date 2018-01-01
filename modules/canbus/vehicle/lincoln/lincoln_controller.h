@@ -131,7 +131,7 @@ class LincolnController final : public VehicleController {
   virtual bool CheckResponse(const int32_t flags, bool need_wait);
   void set_chassis_error_mask(const int32_t mask);
   int32_t chassis_error_mask();
-  Chassis::ErrorCode chassis_error_code();
+  common::ErrorCode chassis_error_code();
   void set_chassis_error_code(const Chassis::ErrorCode &error_code);
 
  private:
@@ -148,7 +148,7 @@ class LincolnController final : public VehicleController {
   bool is_chassis_error_ = false;
 
   std::mutex chassis_error_code_mutex_;
-  Chassis::ErrorCode chassis_error_code_ = Chassis::NO_ERROR;
+  common::ErrorCode chassis_error_code_ = common::ErrorCode::OK;
 
   std::mutex chassis_mask_mutex_;
   int32_t chassis_error_mask_ = 0;

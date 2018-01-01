@@ -152,7 +152,7 @@ Chassis LincolnController::chassis() {
 
   // 21, 22, previously 1, 2
   if (driving_mode() == Chassis::EMERGENCY_MODE) {
-    set_chassis_error_code(Chassis::NO_ERROR);
+    set_chassis_error_code(ErrorCode::OK);
   }
 
   chassis_.set_driving_mode(driving_mode());
@@ -324,7 +324,7 @@ Chassis LincolnController::chassis() {
 void LincolnController::Emergency() {
   set_driving_mode(Chassis::EMERGENCY_MODE);
   ResetProtocol();
-  set_chassis_error_code(Chassis::CHASSIS_ERROR);
+  set_chassis_error_code(ErrorCode::CAN_CHASSIS_ERROR_BASE);
 }
 
 ErrorCode LincolnController::EnableAutoMode() {
@@ -354,7 +354,7 @@ ErrorCode LincolnController::DisableAutoMode() {
   ResetProtocol();
   can_sender_->Update();
   set_driving_mode(Chassis::COMPLETE_MANUAL);
-  set_chassis_error_code(Chassis::NO_ERROR);
+  set_chassis_error_code(ErrorCode::OK);
   AINFO << "Switch to COMPLETE_MANUAL ok.";
   return ErrorCode::OK;
 }
@@ -705,7 +705,8 @@ void LincolnController::SecurityDogThreadFunc() {
       ++steer_ctrl_fail;
       if (steer_ctrl_fail >= kMaxFailAttempt) {
         emergency_mode = true;
-        set_chassis_error_code(Chassis::MANUAL_INTERVENTION);
+        set_chassis_error_code(
+            ErrorCode::CAN_CHASSIS_ERROR_MANUAL_INTERVENTION);
       }
     } else {
       steer_ctrl_fail = 0;
@@ -718,13 +719,14 @@ void LincolnController::SecurityDogThreadFunc() {
       ++speed_ctrl_fail;
       if (speed_ctrl_fail >= kMaxFailAttempt) {
         emergency_mode = true;
-        set_chassis_error_code(Chassis::MANUAL_INTERVENTION);
+        set_chassis_error_code(
+            ErrorCode::CAN_CHASSIS_ERROR_MANUAL_INTERVENTION);
       }
     } else {
       speed_ctrl_fail = 0;
     }
     if (CheckChassisError()) {
-      set_chassis_error_code(Chassis::CHASSIS_ERROR);
+      set_chassis_error_code(ErrorCode::CAN_CHASSIS_ERROR_BASE);
       emergency_mode = true;
     }
 
@@ -810,8 +812,7 @@ Chassis::ErrorCode LincolnController::chassis_error_code() {
   return chassis_error_code_;
 }
 
-void LincolnController::set_chassis_error_code(
-    const Chassis::ErrorCode &error_code) {
+void LincolnController::set_chassis_error_code(const ErrorCode &error_code) {
   std::lock_guard<std::mutex> lock(chassis_error_code_mutex_);
   chassis_error_code_ = error_code;
 }

@@ -140,7 +140,7 @@ ErrorCode %(car_type_cap)sController::EnableAutoMode() {
   if (!CheckResponse(flag, true)) {
     AERROR << "Failed to switch to COMPLETE_AUTO_DRIVE mode.";
     Emergency();
-    set_chassis_error_code(Chassis::CHASSIS_ERROR);
+    set_chassis_error_code(Common::CAN_CHASSIS_ERROR_BASE);
     return ErrorCode::CANBUS_ERROR;
   } else {
     set_driving_mode(Chassis::COMPLETE_AUTO_DRIVE);
@@ -176,7 +176,7 @@ ErrorCode %(car_type_cap)sController::EnableSteeringOnlyMode() {
   if (CheckResponse(CHECK_RESPONSE_STEER_UNIT_FLAG, true) == false) {
     AERROR << "Failed to switch to AUTO_STEER_ONLY mode.";
     Emergency();
-    set_chassis_error_code(Chassis::CHASSIS_ERROR);
+    set_chassis_error_code(Common::CAN_CHASSIS_ERROR_BASE);
     return ErrorCode::CANBUS_ERROR;
   } else {
     set_driving_mode(Chassis::AUTO_STEER_ONLY);
@@ -203,7 +203,7 @@ ErrorCode %(car_type_cap)sController::EnableSpeedOnlyMode() {
   if (CheckResponse(CHECK_RESPONSE_SPEED_UNIT_FLAG, true) == false) {
     AERROR << "Failed to switch to AUTO_STEER_ONLY mode.";
     Emergency();
-    set_chassis_error_code(Chassis::CHASSIS_ERROR);
+    set_chassis_error_code(Common::CAN_CHASSIS_ERROR_BASE);
     return ErrorCode::CANBUS_ERROR;
   } else {
     set_driving_mode(Chassis::AUTO_SPEED_ONLY);
@@ -406,7 +406,7 @@ void %(car_type_cap)sController::SecurityDogThreadFunc() {
       ++horizontal_ctrl_fail;
       if (horizontal_ctrl_fail >= kMaxFailAttempt) {
         emergency_mode = true;
-        set_chassis_error_code(Chassis::MANUAL_INTERVENTION);
+        set_chassis_error_code(Common::CAN_CHASSIS_ERROR_MANUAL_INTERVENTION);
       }
     } else {
       horizontal_ctrl_fail = 0;
@@ -419,13 +419,13 @@ void %(car_type_cap)sController::SecurityDogThreadFunc() {
       ++vertical_ctrl_fail;
       if (vertical_ctrl_fail >= kMaxFailAttempt) {
         emergency_mode = true;
-        set_chassis_error_code(Chassis::MANUAL_INTERVENTION);
+        set_chassis_error_code(Common::CAN_CHASSIS_ERROR_MANUAL_INTERVENTION);
       }
     } else {
       vertical_ctrl_fail = 0;
     }
     if (CheckChassisError()) {
-      set_chassis_error_code(Chassis::CHASSIS_ERROR);
+      set_chassis_error_code(Common::CAN_CHASSIS_ERROR_BASE);
       emergency_mode = true;
     }
 
